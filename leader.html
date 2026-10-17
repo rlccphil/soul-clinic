@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="robots" content="noindex, nofollow">
+  <base target="_top">
+  <meta charset="utf-8">
+  <link rel="icon" href="logo-green.png">
+  <title>Soul Clinic — Ministry Leader Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{--green:#365233;--green-dark:#263c25;--paper:#f6f8f4;--ink:#20251f;--muted:#667064;--line:#dce4d8;--white:#fff;--red:#9a392d;--amber:#8a5b0a}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+    header{background:var(--green);color:#fff;padding:20px 18px}.wrap{width:min(100% - 28px,1120px);margin:auto}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:12px;letter-spacing:.12em;font-weight:800}.top a{color:#fff}.brandwrap{display:flex;align-items:center;gap:12px}.brand-logo{height:42px;width:auto;display:block}
+    h1{font-size:26px;margin:8px 0 3px;letter-spacing:-.03em}header p{margin:0;color:#e5eee2;font-size:14px}
+    main{padding:22px 0 38px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:16px}
+    h2{font-size:20px;margin:0 0 12px}h3{font-size:16px;margin:0 0 7px}.muted{color:var(--muted);font-size:13px}
+    label{display:block;font-weight:650;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;font-size:15px;width:100%;border:1px solid #cbd5c7;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink)}
+    textarea{min-height:90px;resize:vertical}.field{margin-bottom:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    button{font:inherit;border:0;border-radius:9px;padding:10px 14px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}
+    button.secondary{background:#e8eee5;color:var(--green-dark)}button.danger{background:#fff0ed;color:var(--red)}button:disabled{opacity:.55;cursor:wait}
+    .hidden{display:none!important}.error{background:#fff0ed;border:1px solid #edc9c1;color:#7b2e23;border-radius:10px;padding:12px;margin:12px 0;white-space:pre-line}
+    .success{background:#edf5e9;border:1px solid #c8dec0;color:#2e4d29;border-radius:10px;padding:12px;margin:12px 0}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:15px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px}.stat strong{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}
+    .filters{display:flex;gap:10px;align-items:center;margin-bottom:12px}.filters input,.filters select{max-width:300px}
+    .cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.case{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;cursor:pointer}.case:hover{border-color:#8da387}.case.selected{border:2px solid var(--green);padding:13px}
+    .case-title{font-weight:750;font-size:16px}.meta{font-size:12px;color:var(--muted);margin:3px 0}.pill{display:inline-block;border-radius:30px;background:#edf2ea;color:#365233;font-size:11px;padding:4px 8px;margin:4px 4px 0 0}.pill.urgent{background:#fff0ed;color:#8b2e22}.detailhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detailhead h2{margin-bottom:4px}
+    .response{border-top:1px solid var(--line);padding:12px 0}.response:first-of-type{border-top:0}.response b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.response div{white-space:pre-wrap;overflow-wrap:anywhere}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+    .notice{background:#f0f4ed;border-radius:10px;padding:12px;font-size:13px;margin-bottom:14px}.helper-note{font-size:12px;color:var(--muted);margin-top:4px}
+    @media(max-width:700px){.grid,.cases{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{align-items:stretch;flex-direction:column}.filters input,.filters select{max-width:none}.detailhead{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div class="brandwrap"><img class="brand-logo" src="logo-white.png" alt="Real Life Christian Communities" onerror="this.style.display='none'"><div class="brand">REAL LIFE CHRISTIAN COMMUNITIES · SOUL CLINIC</div></div><button id="signOutBtn" class="secondary hidden" type="button">Sign out</button></div>
+  <h1>Ministry Leader Dashboard</h1><p>Confidential intake review, referral decisions, and follow-up tracking.</p>
+</div></header>
+<main class="wrap">
+  <div id="globalError" class="error hidden"></div>
+  <section id="loginCard" class="card">
+    <h2>Authorized leader sign-in</h2>
+    <p class="muted">Enter an email address listed in the Soul Clinic spreadsheet's Settings tab. We'll send a one-time verification code to that address.</p>
+    <div id="loginStepEmail">
+      <div class="field"><label for="leaderEmail">Authorized email address</label><input id="leaderEmail" type="email" autocomplete="email" required placeholder="name@example.com"></div>
+      <button id="sendCodeBtn" type="button">Send verification code</button>
+    </div>
+    <div id="loginStepCode" class="hidden">
+      <div class="field"><label for="leaderCode">Six-digit verification code</label><input id="leaderCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></div>
+      <div class="actions"><button id="verifyBtn" type="button">Verify and sign in</button><button id="backBtn" class="secondary" type="button">Use another email</button></div>
+    </div>
+    <div id="loginMessage" class="muted" aria-live="polite"></div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div id="welcome" class="muted" style="margin-bottom:12px"></div>
+    <div class="stats">
+      <div class="stat"><strong id="statTotal">0</strong><span>Total intakes</span></div>
+      <div class="stat"><strong id="statPending">0</strong><span>Awaiting review</span></div>
+      <div class="stat"><strong id="statUrgent">0</strong><span>Safety concerns flagged</span></div>
+      <div class="stat"><strong id="statReferred">0</strong><span>Referred / in follow-up</span></div>
+    </div>
+    <div class="notice"><strong>Confidentiality reminder:</strong> Review only for Soul Clinic care coordination. Do not forward client information unnecessarily. A flagged safety concern requires prompt human attention; this dashboard is not monitored as an emergency service.</div>
+    <section class="card">
+      <h2>Intake requests</h2>
+      <div class="filters"><input id="searchBox" type="search" placeholder="Search name or intake ID"><select id="statusFilter"><option value="">All statuses</option><option>Awaiting ministry review</option><option>Under review</option><option>Needs prompt contact</option><option>Further clarification needed</option><option>Ready for referral</option><option>Referred</option><option>Appointment scheduled</option><option>Follow-up needed</option><option>Closed</option></select><button id="refreshBtn" class="secondary" type="button">Refresh</button></div>
+      <div id="caseList" class="cases"></div>
+    </section>
+
+    <section id="detailCard" class="card hidden">
+      <div class="detailhead"><div><div class="muted" id="detailId"></div><h2 id="detailName"></h2><div class="muted" id="detailContact"></div></div><div class="actions"><button id="openPdfBtn" class="secondary" type="button">Open PDF</button></div></div>
+      <div id="intakeResponses"></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+      <h2>Ministry leader review</h2>
+      <p class="muted">Record observations separately from the client's own statements. A pathway is a referral consideration, not a diagnosis.</p>
+      <div class="field"><label for="assessment">Initial observations and assessment</label><textarea id="assessment" placeholder="Summarize the presenting concern and what needs further exploration."></textarea></div>
+      <div class="grid">
+        <div class="field"><label for="pathway">Recommended pathway</label><select id="pathway"><option value="">Not yet determined</option><option>Pastoral counseling</option><option>Spiritual direction</option><option>Coaching</option><option>Professional counseling / psychotherapy</option><option>Combined support</option><option>Further clarification needed</option></select></div>
+        <div class="field"><label for="reviewStatus">Review / referral status</label><select id="reviewStatus"><option>Awaiting ministry review</option><option>Under review</option><option>Needs prompt contact</option><option>Further clarification needed</option><option>Ready for referral</option><option>Referred</option><option>Appointment scheduled</option><option>Follow-up needed</option><option>Closed</option></select></div>
+      </div>
+      <div class="field"><label for="rationale">Referral rationale and boundaries</label><textarea id="rationale" placeholder="Why does this pathway fit? What is outside the helper's role?"></textarea></div>
+      <div class="grid">
+        <div class="field"><label for="helperSelect">Select active helper</label><select id="helperSelect"><option value="">No helper selected</option></select><div class="helper-note">Only active helpers listed in the Helpers Directory appear here.</div></div>
+        <div class="field"><label for="clientContacted">Client contacted?</label><select id="clientContacted"><option>Not yet</option><option>Yes — email</option><option>Yes — phone / text</option><option>Awaiting response</option><option>Not applicable yet</option></select></div>
+      </div>
+      <div id="helperInfo" class="notice hidden"></div>
+      <div class="field"><label for="followUpNotes">Follow-up plan and notes</label><textarea id="followUpNotes" placeholder="Next action, responsible person, and follow-up date. Avoid unnecessary sensitive detail."></textarea></div>
+      <div id="reviewMessage" aria-live="polite"></div>
+      <div class="actions"><button id="saveReviewBtn" type="button">Save review</button><button id="clearSelectionBtn" class="secondary" type="button">Back to intakes</button></div>
+    </section>
+  </section>
+</main>
+<script src="api.js"></script>
+<script>
+  let sessionToken = '';
+  let leaderEmail = '';
+  let allCases = [];
+  let currentIntakeId = '';
+  let currentDetail = null;
+
+  const $ = id => document.getElementById(id);
+  function showGlobalError(message) { $('globalError').textContent = message; $('globalError').classList.remove('hidden'); }
+  function clearGlobalError() { $('globalError').textContent = ''; $('globalError').classList.add('hidden'); }
+  function callServer(name, args, onSuccess) {
+    clearGlobalError();
+    google.script.run.withSuccessHandler(onSuccess).withFailureHandler(err => {
+      showGlobalError(err && err.message ? err.message : 'The request failed. Please try again.');
+    })[name](...args);
+  }
+
+  $('sendCodeBtn').addEventListener('click', () => {
+    const email = $('leaderEmail').value.trim().toLowerCase();
+    if (!email) { $('loginMessage').textContent = 'Enter your authorized email address.'; return; }
+    $('sendCodeBtn').disabled = true; $('loginMessage').textContent = 'Requesting code…';
+    callServer('requestLeaderCode', [email], result => {
+      $('sendCodeBtn').disabled = false;
+      leaderEmail = email;
+      $('loginStepEmail').classList.add('hidden');
+      $('loginStepCode').classList.remove('hidden');
+      $('loginMessage').textContent = result.message;
+      $('leaderCode').focus();
+    });
+  });
+  $('verifyBtn').addEventListener('click', () => {
+    const code = $('leaderCode').value.trim();
+    if (!code) { $('loginMessage').textContent = 'Enter the code from your email.'; return; }
+    $('verifyBtn').disabled = true; $('loginMessage').textContent = 'Verifying…';
+    callServer('verifyLeaderCode', [leaderEmail, code], result => {
+      $('verifyBtn').disabled = false;
+      sessionToken = result.token; leaderEmail = result.email;
+      $('loginCard').classList.add('hidden');
+      $('dashboard').classList.remove('hidden');
+      $('signOutBtn').classList.remove('hidden');
+      $('welcome').textContent = 'Signed in as ' + leaderEmail + '. Sessions expire after 30 minutes.';
+      loadDashboard();
+    });
+  });
+  $('backBtn').addEventListener('click', () => {
+    $('loginStepCode').classList.add('hidden'); $('loginStepEmail').classList.remove('hidden');
+    $('leaderCode').value = ''; $('loginMessage').textContent = '';
+  });
+  $('signOutBtn').addEventListener('click', () => {
+    const old = sessionToken; sessionToken = '';
+    google.script.run.withSuccessHandler(() => {}).leaderSignOut(old);
+    $('dashboard').classList.add('hidden'); $('signOutBtn').classList.add('hidden'); $('loginCard').classList.remove('hidden');
+    $('loginStepEmail').classList.remove('hidden'); $('loginStepCode').classList.add('hidden'); $('leaderCode').value = '';
+    $('loginMessage').textContent = 'You have signed out.';
+    currentIntakeId = ''; currentDetail = null;
+  });
+  $('refreshBtn').addEventListener('click', loadDashboard);
+  $('searchBox').addEventListener('input', renderCases);
+  $('statusFilter').addEventListener('change', renderCases);
+  $('clearSelectionBtn').addEventListener('click', () => $('detailCard').classList.add('hidden'));
+  $('openPdfBtn').addEventListener('click', () => {
+    if (!currentIntakeId) return;
+    callServer('getPdfUrlForLeader', [sessionToken, currentIntakeId], result => window.open(result.url, '_blank', 'noopener'));
+  });
+  $('helperSelect').addEventListener('change', renderHelperInfo);
+  $('saveReviewBtn').addEventListener('click', saveReview);
+
+  function loadDashboard() {
+    $('refreshBtn').disabled = true;
+    callServer('getLeaderDashboard', [sessionToken], result => {
+      $('refreshBtn').disabled = false;
+      allCases = result.items || [];
+      $('statTotal').textContent = result.counts.total;
+      $('statPending').textContent = result.counts.pending;
+      $('statUrgent').textContent = result.counts.urgent;
+      $('statReferred').textContent = result.counts.referred;
+      renderCases();
+    });
+  }
+  function renderCases() {
+    const query = $('searchBox').value.trim().toLowerCase();
+    const status = $('statusFilter').value;
+    const filtered = allCases.filter(c => {
+      const matchesQuery = !query || c.name.toLowerCase().includes(query) || c.id.toLowerCase().includes(query);
+      const matchesStatus = !status || c.status === status;
+      return matchesQuery && matchesStatus;
+    });
+    const list = $('caseList'); list.innerHTML = '';
+    if (!filtered.length) { list.innerHTML = '<div class="empty" style="grid-column:1/-1">No intake requests match these filters.</div>'; return; }
+    filtered.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'case' + (c.id === currentIntakeId ? ' selected' : '');
+      const title = document.createElement('div'); title.className = 'case-title'; title.textContent = c.name || '(Name not provided)';
+      const id = document.createElement('div'); id.className = 'meta'; id.textContent = c.id + ' · ' + c.submittedAt;
+      const urgency = document.createElement('span'); urgency.className = 'pill' + (/immediate safety concern/i.test(c.urgency) ? ' urgent' : ''); urgency.textContent = c.urgency || 'Urgency not specified';
+      const statusPill = document.createElement('span'); statusPill.className = 'pill'; statusPill.textContent = c.status || 'Awaiting ministry review';
+      const pathway = document.createElement('div'); pathway.className = 'meta'; pathway.textContent = c.pathway ? 'Pathway: ' + c.pathway : 'Pathway not recorded';
+      card.append(title,id,urgency,statusPill,pathway);
+      card.addEventListener('click', () => openIntake(c.id));
+      list.appendChild(card);
+    });
+  }
+  function openIntake(id) {
+    currentIntakeId = id; $('detailCard').classList.remove('hidden');
+    $('detailCard').scrollIntoView({behavior:'smooth',block:'start'});
+    $('intakeResponses').innerHTML = '<div class="muted">Loading confidential intake…</div>';
+    callServer('getLeaderIntakeDetail', [sessionToken, id], result => {
+      currentDetail = result;
+      const i = result.intake, r = result.review;
+      $('detailId').textContent = i.id + ' · Submitted ' + i.submittedAt;
+      $('detailName').textContent = i.fullName;
+      $('detailContact').textContent = [i.email,i.mobile,i.community].filter(Boolean).join(' · ');
+      const responses = [
+        ['What brings you to Soul Clinic?',i.story],
+        ['How are you experiencing God?',i.godExperience],
+        ['Emotional or relational experience',i.emotionalRelational],
+        ['Hopes for support',i.hopes],
+        ['Practical considerations',i.practical],
+        ['Preferred helper type',i.preference],
+        ['Previous support',i.previousSupport],
+        ['Self-reported urgency',i.urgency],
+        ['Age range',i.ageRange],
+        ['Preferred contact', [i.contactMethod,i.contactTime].filter(Boolean).join(' · ')]
+      ];
+      const box = $('intakeResponses'); box.innerHTML = '';
+      responses.forEach(pair => {
+        const row = document.createElement('div'); row.className = 'response';
+        const label = document.createElement('b'); label.textContent = pair[0];
+        const value = document.createElement('div'); value.textContent = pair[1] || 'Not provided';
+        row.append(label,value); box.appendChild(row);
+      });
+      $('assessment').value = r.leaderAssessment || '';
+      $('pathway').value = r.pathway || '';
+      $('rationale').value = r.rationale || '';
+      $('reviewStatus').value = r.status || i.status || 'Awaiting ministry review';
+      $('clientContacted').value = r.clientContacted || 'Not yet';
+      $('followUpNotes').value = r.followUpNotes || '';
+      const helperSelect = $('helperSelect'); helperSelect.innerHTML = '<option value="">No helper selected</option>';
+      (result.helpers || []).forEach(h => {
+        const opt = document.createElement('option'); opt.value = h.id;
+        opt.textContent = h.name + ' — ' + (h.pathway || 'Pathway not specified');
+        helperSelect.appendChild(opt);
+      });
+      helperSelect.value = r.helperId || '';
+      renderHelperInfo();
+      renderCases();
+    });
+  }
+  function renderHelperInfo() {
+    const id = $('helperSelect').value;
+    const h = currentDetail && currentDetail.helpers ? currentDetail.helpers.find(x => x.id === id) : null;
+    const box = $('helperInfo');
+    if (!h) { box.classList.add('hidden'); box.textContent = ''; return; }
+    box.classList.remove('hidden');
+    box.textContent = h.name + ' · ' + (h.pathway || 'Pathway not specified') +
+      '\nCredentials: ' + (h.credentials || 'Not listed') +
+      '\nLicense / registration: ' + (h.license || 'Not listed') +
+      '\nVerification date: ' + (h.verifiedDate || 'Not recorded') +
+      '\nScope / competence: ' + (h.scope || 'Not listed') +
+      '\nAvailability: ' + (h.availability || 'Not listed') +
+      '\nMode: ' + (h.mode || 'Not listed') +
+      '\nLanguages: ' + (h.languages || 'Not listed');
+    if ($('pathway').value === 'Professional counseling / psychotherapy' && !h.credentialsVerified) {
+      box.textContent += '\n\nCAUTION: Professional credentials are not marked as verified. Verify current registration, licensed scope, and competence before referral.';
+    }
+  }
+  $('pathway').addEventListener('change', renderHelperInfo);
+
+  function saveReview() {
+    if (!currentIntakeId) return;
+    const helper = currentDetail && currentDetail.helpers ? currentDetail.helpers.find(x => x.id === $('helperSelect').value) : null;
+    if ($('pathway').value === 'Professional counseling / psychotherapy' && helper && !helper.credentialsVerified) {
+      if (!confirm('This helper is not marked as having verified credentials. The server will not save this professional-care referral until the directory records verified credentials. Continue to save the review without selecting this helper?')) return;
+      $('helperSelect').value = '';
+    }
+    const payload = {
+      intakeId: currentIntakeId,
+      assessment: $('assessment').value,
+      pathway: $('pathway').value,
+      rationale: $('rationale').value,
+      helperId: $('helperSelect').value,
+      clientContacted: $('clientContacted').value,
+      status: $('reviewStatus').value,
+      followUpNotes: $('followUpNotes').value
+    };
+    $('saveReviewBtn').disabled = true; $('reviewMessage').className = 'muted'; $('reviewMessage').textContent = 'Saving…';
+    callServer('saveLeaderReview', [sessionToken, payload], result => {
+      $('saveReviewBtn').disabled = false;
+      $('reviewMessage').className = 'success'; $('reviewMessage').textContent = result.message;
+      loadDashboard();
+    });
+  }
+</script>
+</body>
+</html>

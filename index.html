@@ -62,6 +62,8 @@
     .status.success { display:block; background:#edf5e9; border:1px solid #c8dec0; }
     .status.error { display:block; background:#fff0ed; border:1px solid #edc9c1; }
     .urgent { margin-top:12px; padding:13px; border-left:4px solid #9b3d2d; background:#fff3ef; color:#67261d; }
+    .leader-link { display:inline-block; margin-top:14px; padding:8px 14px; border:1px solid var(--line); border-radius:999px; color:var(--green); font-weight:650; text-decoration:none; background:#fff; }
+    .leader-link:hover { background:#eef3eb; }
     footer { color:var(--muted); font-size:12px; padding:0 0 28px; }
     .hp { position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
     @media(max-width:600px) { .card { padding:18px; } .grid { grid-template-columns:1fr; gap:0; } header { padding-top:21px; } }
@@ -172,7 +174,7 @@
     <button class="button" id="submitButton" type="submit">Submit confidential intake</button>
   </form>
 </main>
-<footer>Real Life Christian Communities · Soul Clinic<br>Please submit this form only for yourself or with the person's permission. Do not use it to report an emergency.</footer>
+<footer>Real Life Christian Communities · Soul Clinic<br>Please submit this form only for yourself or with the person's permission. Do not use it to report an emergency.<br><a class="leader-link" href="leader.html">Ministry leader sign-in</a></footer>
 <script src="api.js"></script>
 <script>
   const form = document.getElementById('intakeForm');
